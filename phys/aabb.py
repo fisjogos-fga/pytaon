@@ -11,7 +11,7 @@ class AABB(Body):
 
     @property
     def area(self):
-        raise NotImplementedError
+        return self.width * self.height
 
     @property
     def width(self):
@@ -19,7 +19,7 @@ class AABB(Body):
 
     @property
     def height(self):
-        raise NotImplementedError
+        return self.top - self.bottom
 
     @property
     def position_x(self):
@@ -33,11 +33,13 @@ class AABB(Body):
 
     @property
     def position_y(self):
-        raise NotImplementedError
+        return (self.bottom + self.top) / 2
 
     @position_y.setter
     def position_y(self, value):
-        raise NotImplementedError
+        dy = value - self.position_y
+        self.bottom += dy
+        self.top += dy
 
     def __init__(self, left, bottom, right, top, *args, **kwargs):
         assert left <= right
@@ -46,13 +48,29 @@ class AABB(Body):
         super().__init__((self.position_x, self.position_y), *args, **kwargs)
 
     def draw(self):
-        raise NotImplementedError
+        pyxel.rect(self.left, self.bottom, self.width, self.height, self.color)
 
     def update_position(self, dt):
-        raise NotImplementedError
+        dx = self.velocity_x * dt
+        dy = self.velocity_y * dt
+        self.left += dx
+        self.right += dx
+        self.bottom += dy
+        self.top += dy
 
     def get_collision(self, other):
-        raise NotImplementedError
+        return other.get_collision_aabb(self)
 
     def get_collision_aabb(self, other):
-        raise NotImplementedError
+        ax = max(self.left, other.left)
+        bx = min(self.right, other.right)
+        ay = max(self.bottom, other.bottom)
+        by = min(self.top, other.top)
+
+        if ax < bx and ay < by:
+            pos = ((ax + bx) / 2, (ay + by) / 2)
+            if bx - ax < by - ay:
+                normal = (1, 0)
+            else:
+                normal = (0, 1)
+            return Collision(self, other, pos, normal)

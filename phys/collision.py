@@ -20,12 +20,19 @@ class Collision:
         """
         Calcula e aplica impulsos de colisão entre dois objetos. 
         """
-        self.body_a.velocity_x = 0
-        self.body_a.velocity_y = 0
-        self.body_b.velocity_x = 0
-        self.body_b.velocity_y = 0
-        self.body_a.color = pyxel.COLOR_RED
-        self.body_b.color = pyxel.COLOR_RED
+        if self.normal_x == 0:
+            self.body_a.velocity_y *= -1
+            self.body_b.velocity_y *= -1
+        elif self.normal_y == 0:
+            self.body_a.velocity_x *= -1
+            self.body_b.velocity_x *= -1
+        else:
+            self.body_a.velocity_x = 0
+            self.body_a.velocity_y = 0
+            self.body_b.velocity_x = 0
+            self.body_b.velocity_y = 0
+            self.body_a.color = pyxel.COLOR_RED
+            self.body_b.color = pyxel.COLOR_RED
 
     def draw(self, color=pyxel.COLOR_RED):
         """
