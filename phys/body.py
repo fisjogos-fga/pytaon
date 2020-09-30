@@ -3,6 +3,7 @@ import random
 from math import sqrt
 
 from .collision import Collision
+from .vec2d import Vec2d
 
 
 class Body:
@@ -14,8 +15,14 @@ class Body:
     """
 
     # Propriedades genéricas
-    position_x: float = None
-    position_y: float = None
+    position: Vec2d = None
+    velocity: Vec2d = None
+    force: Vec2d = None
+
+    position_x = property(lambda self: self.position.x)
+    position_y = property(lambda self: self.position.y)
+    velocity_x = property(lambda self: self.velocity.x)
+    velocity_y = property(lambda self: self.velocity.y)
 
     @property
     def area(self):
@@ -27,49 +34,43 @@ class Body:
         return self.mass / self.area if self.area else float("inf")
 
     def __init__(self, pos=(0, 0), vel=(0, 0), mass=1.0, color=0):
-        self.position_x, self.position_y = map(float, pos)
-        self.velocity_x, self.velocity_y = map(float, vel)
+        self.position = Vec2d(*pos)
+        self.velocity = Vec2d(*vel)
         self.mass = float(mass)
         self.color = color
+        self.force = Vec2d(0, 0)
 
-        self.force_x = 0.0
-        self.force_y = 0.0
-
-    def apply_force(self, fx, fy):
+    def apply_force(self, fx, fy=None):
         """
         Aplica força ao objeto.
 
         Este método é cumulativo e permite que várias forças sejam acumuladas
         ao mesmo objeto em cada passo de simulação.
         """
-        self.force_x += fx
-        self.force_y += fy
+        if fy is not None:
+            fx = Vec2d(fx, fy)
+        self.force += fx
 
     def update_velocity(self, dt):
         """
         Atualiza velocidades de acordo com as forças acumuladas até o presente
         frame.
         """
-        acc_x = self.force_x / self.mass
-        acc_y = self.force_y / self.mass
-
-        self.velocity_x += acc_x * dt
-        self.velocity_y += acc_y * dt
-
-        self.force_x = self.force_y = 0.0
+        acc = self.force / self.mass
+        self.velocity += acc * dt
+        self.force *= 0.0
 
     def update_position(self, dt):
         """
         Atualiza posições de acordo com as velocidades.
         """
-        self.position_x += self.velocity_x * dt
-        self.position_y += self.velocity_y * dt
+        self.position += self.velocity * dt
 
     def draw(self):
         """
         Desenha figura na tela.
         """
-        pyxel.pset(self.position_x, self.position_y, self.color)
+        pyxel.pset(*self.position, self.color)
 
     #
     # Calcula colisões com outras figuras geométricas.
@@ -79,28 +80,29 @@ class Body:
         Verifica se há colisão com outro objeto e retorna um objeto de colisão 
         ou None caso não exista superposição.
         """
-        raise NotImplementedError(type(self), type(other))
+        msg = f'Colisão não implementada: {type(self)}, {type(other)}'
+        raise NotImplementedError(msg)
 
     def get_collision_circle(self, other: "Circle"):
         """
         Verifica colisão com círculos.
         """
-        raise NotImplementedError
+        raise NotImplementedError("Implemente em sub-classe")
 
     def get_collision_aabb(self, other):
         """
         Verifica colisão com AABBs.
         """
-        raise NotImplementedError
+        raise NotImplementedError("Implemente em sub-classe")
 
     def get_collision_poly(self, other):
         """
         Verifica colisão com Polígonos.
         """
-        raise NotImplementedError
+        raise NotImplementedError("Implemente em sub-classe")
 
     def get_collision_segment(self, other):
         """
         Verifica colisão com Pílulas.
         """
-        raise NotImplementedError
+        raise NotImplementedError("Implemente em sub-classe")

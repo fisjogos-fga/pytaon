@@ -1,0 +1,6 @@
+def partial_renderer(func, *args, **kwargs):
+    ...
+
+
+def circle_renderer():
+    ...

@@ -80,44 +80,88 @@ class Vec2d:
         return cls(0.0, 0.0)
 
     def __init__(self, x, y=None):
-        self.x = x + 0.0
-        self.y = y + 0.0
+        self.x = float(x)
+        self.y = float(y)
+
+    def __repr__(self):
+        return f'Vec2d({self.x}, {self.y})'
+
+    def __neg__(self):
+        raise NotImplementedError
+
+    def __pos__(self):
+        raise NotImplementedError
+
+    def __abs__(self):
+        return self.length
 
     # Operações matemáticas
-    def __add__(self, other):
-        raise NotImplementedError
+    def __add__(self, other):  # self + other
+        if isinstance(other, (Vec2d, tuple)):
+            x, y = other
+            return Vec2d(self.x + x, self.y + y)
+        return NotImplemented
 
-    def __radd__(self, other):
-        raise NotImplementedError
+    __radd__ = __add__  # other + self == self + other 
+
+    def __iadd__(self, other):  # self += other
+        x, y = other
+        self.x += x
+        self.y += y
+        return self
 
     def __sub__(self, other):
-        raise NotImplementedError
+        if isinstance(other, (Vec2d, tuple)):
+            x, y = other
+            return Vec2d(self.x - x, self.y - y)
+        return NotImplemented
 
     def __rsub__(self, other):
         raise NotImplementedError
 
+    def __isub__(self, other):
+        raise NotImplementedError
+    
     def __mul__(self, other):
-        raise NotImplementedError
+        if isinstance(other, (int, float)):
+            return Vec2d(self.x * other, self.y * other)
+        return NotImplemented
 
-    def __rmul__(self, other):
-        raise NotImplementedError
+    __rmul__ = __mul__
 
-    def __truediv__(self, other):
-        raise NotImplementedError
+    def __imul__(self, other):
+        self.x *= other 
+        self.y *= other
+        return self
+
+    def __matmul__(self, other):
+        if isinstance(other, (int, float)):
+            x, y = other
+            return self.x * x + self.y * y
+        return NotImplemented
+
+    __rmatmul__ = __matmul__
+
+    def __truediv__(self, other): # self * (1 / other)
+        return self.__mul__(1 / other)
+
+    def __itruediv__(self, other):  # self /= other
+        return self.__imul__(1 / other)
 
     # Comparações
     def __eq__(self, other):
-        raise NotImplementedError
-
-    def __neq__(self, other):
-        raise NotImplementedError
+        if isinstance(other, (Vec2d, tuple)):
+            x, y = other
+            return x == self.x and y == self.y
+        return NotImplemented
 
     # Comportamento de sequências
     def __len__(self):
         return 2
 
     def __iter__(self):
-        raise NotImplementedError
+        yield self.x
+        yield self.y
 
     def __getitem__(self, idx):
         raise NotImplementedError
@@ -136,7 +180,7 @@ class Vec2d:
         """
         Retorna componente z do produto vetorial com outro vetor.
         
-        ``v1.cross(v2) -> v1.x*v2.y - v1.y*v2.x``
+        ``u.cross(v) -> u.x * v.y - u.y * v.x``
         """
         raise NotImplementedError
 

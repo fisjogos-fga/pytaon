@@ -120,3 +120,44 @@ class Space:
 
         for body in self.bodies:
             body.draw()
+
+    def add_default_collision_handler(self, pre_solve=None, post_solve=None):
+        """
+        Registra o CollisionHandler padrão para colisões que não possuem um 
+        método mais específico associado. 
+        """
+        raise NotImplementedError
+
+    def add_wildcard_collision_handler(self, col_type, pre_solve=None, post_solve=None):
+        """
+        Registra o CollisionHandler padrão para colisões que não possuem um 
+        método mais específico associado. 
+        """
+        raise NotImplementedError
+
+    def add_collision_handler(
+        self, col_type_a, col_type_b, pre_solve=None, post_solve=None
+    ):
+        """
+        Retorna um CollisionHandler para colisões entre col_type_a e 
+        col_type_b. Os tipos equivalem às classes dos objetos e não 
+        consideram sub-classes.
+        """
+        raise NotImplementedError
+
+
+class CollisionHandler:
+    """
+    Objeto responsável por processar colisões. 
+    
+    Possui dois atributos correspondendo a funções:
+
+    * pre_solve: Executada antes de processar a colisão e deve retornar um valor 
+      verdadeiro para prosseguir com o processamento da colisão ou falso para desativá-la.
+    * post_solve: Executada após resolver as forças e atualizar as velocidades e
+      posições dos objetos.
+    """
+
+    def __init__(self, pre_solve=None, post_solve=None):
+        self.pre_solve = pre_solve or (lambda col: True)
+        self.post_solve = post_solve or (lambda col: None)

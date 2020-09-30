@@ -25,8 +25,8 @@ sp.add_circle(radius=6, pos=(90, 60), color=pyxel.COLOR_RED, mass=10)
 
 
 def apply_gravity(A, B, cte=1e4):
-    dx = A.position_x - B.position_x
-    dy = A.position_y - B.position_y
+    dx = A.position.x - B.position.x
+    dy = A.position.y - B.position.y
     r = sqrt(dx ** 2 + dy ** 2)
     dx /= r
     dy /= r
@@ -40,14 +40,14 @@ def apply_gravity(A, B, cte=1e4):
 
 
 def apply_force(obj, x, y, cte=50, gamma=0.5):
-    dx = obj.position_x - x
-    dy = obj.position_y - y
+    dx = obj.position.x - x
+    dy = obj.position.y - y
     r = sqrt(dx ** 2 + dy ** 2)
     dx /= r
     dy /= r
 
-    Fx = -cte * obj.mass * dx - gamma * obj.mass * obj.velocity_x
-    Fy = -cte * obj.mass * dy - gamma * obj.mass * obj.velocity_y
+    Fx = -cte * obj.mass * dx - gamma * obj.mass * obj.velocity.x
+    Fy = -cte * obj.mass * dy - gamma * obj.mass * obj.velocity.y
 
     obj.apply_force(Fx, Fy)
 
