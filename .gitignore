@@ -1,3 +1,4 @@
 dist
 .phys
 __pycache__
+.coverage
