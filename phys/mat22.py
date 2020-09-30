@@ -41,6 +41,10 @@ class Mat2:
         """
         raise NotImplementedError
 
+    @property
+    def T(self):
+        return self.transposed()
+
     # Construtores alternativos
     @classmethod
     def identity(cls):
@@ -85,11 +89,17 @@ class Mat2:
         else:
             self.a, self.b, self.c, self.d = args
 
+    def __repr__(self):
+        return f"Mat2({self.a}, {self.b}, {self.c}, {self.d})"
+
     # Operações matemáticas
     def __add__(self, other):
         raise NotImplementedError
 
     def __radd__(self, other):
+        raise NotImplementedError
+
+    def __iadd__(self, other):
         raise NotImplementedError
 
     def __sub__(self, other):
@@ -98,31 +108,63 @@ class Mat2:
     def __rsub__(self, other):
         raise NotImplementedError
 
-    def __mul__(self, other):
+    def __isub(self, other):
         raise NotImplementedError
 
+    def __mul__(self, other):
+        if isinstance(other, Mat2):
+            raise NotImplementedError
+        elif isinstance(other, Number):
+            raise NotImplementedError
+        return NotImplemented
+
     def __rmul__(self, other):
+        if isinstance(other, Number):
+            raise NotImplementedError
+        return NotImplemented
+
+    def __imul__(self, other):
         raise NotImplementedError
 
     def __truediv__(self, other):
         raise NotImplementedError
 
-    # Comparações
-    def __eq__(self, other):
+    def __itruediv__(self, other):
         raise NotImplementedError
 
-    def __neq__(self, other):
-        raise NotImplementedError
+    # Comparações
+    def __eq__(self, other):
+        if isinstance(other, Mat2):
+            return (
+                self.a == other.a
+                and self.b == other.b
+                and self.c == other.c
+                and self.d == other.d
+            )
+        return NotImplemented
 
     # Comportamento de sequências
     def __len__(self):
         return 2
 
     def __iter__(self):
-        raise NotImplementedError
+        yield Vec2d(self.a, self.c)
+        yield Vec2d(self.b, self.d)
 
     def __getitem__(self, idx):
-        raise NotImplementedError
+        if idx == 0:
+            return Vec2d(self.a, self.c)
+        elif idx == 1:
+            return Vec2d(self.b, self.d)
+        elif idx == (0, 0):
+            return self.a
+        elif idx == (0, 1):
+            return self.c
+        elif idx == (1, 0):
+            return self.b
+        elif idx == (1, 1):
+            return self.d
+        raise IndexError(idx)
 
     def __setitem__(self, idx, value):
         raise NotImplementedError
@@ -134,9 +176,9 @@ class Mat2:
         """
         raise NotImplementedError
 
-    def interpolate_to(self, other: MatLike, range: float) -> "Vec2d":
+    def interpolate_to(self, other: MatLike, range: float) -> "Mat2":
         """
-        Interpola vetor até other no intervalo controlado por range.
+        Interpola matriz linearmente até other no intervalo controlado por range.
 
         Range varia de forma que se range=0.0, retorna self, range=1.0 retorna other
         e valores intermediários produzem interpolações. 
@@ -145,17 +187,17 @@ class Mat2:
 
     def rotate(self, angle: float):
         """
-        Rotaciona vetor pelo ângulo em radianos.
+        Rotaciona matriz pelo ângulo em radianos.
         """
         raise NotImplementedError
 
     def rotate_degrees(self, angle: float):
         """
-        Rotaciona vetor pelo ângulo em graus.
+        Rotaciona matriz pelo ângulo em graus.
         """
         self.rotate(angle * DEGREES_TO_RADS)
 
-    def rotated(self, angle: float) -> "Vec2d":
+    def rotated(self, angle: float) -> "Mat2":
         """
         Cria nova matriz rotacionado ângulo em radianos.
         """
@@ -163,17 +205,17 @@ class Mat2:
         new.rotate(angle)
         return new
 
-    def rotated_degrees(self, angle: float) -> "Vec2d":
+    def rotated_degrees(self, angle: float) -> "Mat2":
         """
         Cria nova matriz rotacionado ângulo em graus.
         """
         return self.rotated(angle * DEGREES_TO_RADS)
 
-    def transform_vector(self, vec: VecLike):
+    def transform_vector(self, vec: Vec2d):
         """
         Transforma vetor pela matriz.
         """
-        raise NotImplementedError
+        vec.x, vec.y = self.transformed_vector(vec)
 
     def transformed_vector(self, vec: VecLike) -> Vec2d:
         """
@@ -181,7 +223,22 @@ class Mat2:
 
         Mesmo que Mat2 * Vec2d
         """
-        raise NotImplementedError
+        x, y = vec
+        return Vec2d(x * self.a + y * self.c, x * self.b + y * self.d)
+
+    def transpose(self):
+        """
+        Transpõe matriz.
+        """
+        raise NotADirectoryError
+
+    def transposed(self) -> "Mat2":
+        """
+        Retorna cópia de matriz transposta.
+        """
+        new = self.copy()
+        new.transpose()
+        return new
 
 
 #
