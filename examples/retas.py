@@ -39,7 +39,7 @@ def draw():
 
     for i in range(pyxel.steps):
         t = pyxel.time + dt * i
-        
+
         x1, y1 = R0 + n * t
         x2, y2 = R0 - n * t
 
@@ -55,15 +55,16 @@ def draw():
 
 def main():
     # Pede vetores de entrada para o usuário
+    print(__doc__)
     pyxel.R0 = read_vec("R0 [x, y]: ")
     pyxel.n = read_vec("n [x, y]: ")
 
-    # Inicializa o módulo    
+    # Inicializa o módulo
     pyxel.time = 0.0
     pyxel.steps = 100
     pyxel.dt = 1 / 30
     pyxel.init(240, 180, caption="Retas", fps=30)
-    
+
     # Roda!
     pyxel.run(update, draw)
 
