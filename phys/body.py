@@ -80,7 +80,7 @@ class Body:
         Verifica se há colisão com outro objeto e retorna um objeto de colisão 
         ou None caso não exista superposição.
         """
-        msg = f'Colisão não implementada: {type(self)}, {type(other)}'
+        msg = f"Colisão não implementada: {type(self)}, {type(other)}"
         raise NotImplementedError(msg)
 
     def get_collision_circle(self, other: "Circle"):

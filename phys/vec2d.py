@@ -84,7 +84,7 @@ class Vec2d:
         self.y = float(y)
 
     def __repr__(self):
-        return f'Vec2d({self.x}, {self.y})'
+        return f"Vec2d({self.x}, {self.y})"
 
     def __neg__(self):
         raise NotImplementedError
@@ -102,7 +102,7 @@ class Vec2d:
             return Vec2d(self.x + x, self.y + y)
         return NotImplemented
 
-    __radd__ = __add__  # other + self == self + other 
+    __radd__ = __add__  # other + self == self + other
 
     def __iadd__(self, other):  # self += other
         x, y = other
@@ -121,7 +121,7 @@ class Vec2d:
 
     def __isub__(self, other):
         raise NotImplementedError
-    
+
     def __mul__(self, other):
         if isinstance(other, (int, float)):
             return Vec2d(self.x * other, self.y * other)
@@ -130,7 +130,7 @@ class Vec2d:
     __rmul__ = __mul__
 
     def __imul__(self, other):
-        self.x *= other 
+        self.x *= other
         self.y *= other
         return self
 
@@ -142,7 +142,7 @@ class Vec2d:
 
     __rmatmul__ = __matmul__
 
-    def __truediv__(self, other): # self * (1 / other)
+    def __truediv__(self, other):  # self * (1 / other)
         return self.__mul__(1 / other)
 
     def __itruediv__(self, other):  # self /= other
