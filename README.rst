@@ -1,31 +1,23 @@
-=============
-Pyxel Physics
-=============
+==============
+Physics Engine
+==============
 
-A simple physics engine based on Pyxel and Pymunk. The physics API replicates Pyxel's standard API when possible, and adds a few extra options and integrations with Pymunk.
+Motor de jogos simples que utiliza física baseado em Pyxel.
 
-Installation
-============
+Instalação
+==========
 
-Just ``pip install pyxel-physics --user`` and you are good to go. Advanced users and contributors might prefer to use the git version ``pip install git+http://github.com/fabiommendes/pyxel-physics --user`` or download the repository and install the local development branch using Flit (``flit install -su``
-
-Usage
-=====
-
-Most functions have similar names and behaviours as the corresponding functions in Pyxel API.
-
-Creating objects
-----------------
+Clone este repositório e utilize ``flit install -s`` para instalar localmente.
 
 
 Tutorial
 ========
 
-Let us create a Pong look-alike with more advanced Physics to show off the library. We start importing the Physics module
+Toda simulação 
 
 .. code-block:: python
 
-    import pyxel.phys as phys
+    import phys
     
     WIDTH = 120
     HEIGHT = 80

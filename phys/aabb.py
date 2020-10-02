@@ -9,6 +9,8 @@ class AABB(Body):
     Objeto com caixa de contorno retangular e alinhada aos eixos. 
     """
 
+    left = right = top = bottom = None
+    
     @property
     def area(self):
         return self.width * self.height

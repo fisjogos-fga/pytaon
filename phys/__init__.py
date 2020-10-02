@@ -11,5 +11,5 @@ from .poly import Poly
 from .space import Space
 from .collision import Collision
 from .vec2d import Vec2d, VecLike, asvec2d
-from .mat22 import Mat2, MatLike, asmat2
+from .mat2 import Mat2, MatLike, asmat2
 from .transform import Transform, astransform

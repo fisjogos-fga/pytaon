@@ -1,27 +1,12 @@
+"""
+Módulo de testes para a classe Vec2d. 
+
+Utiliza os vetores u = <3,4>, v = <1,1>, ii=<1,0> e jj=<0,1> definidos em conftest.
+"""
 import pytest
 import random
 from math import pi, sqrt
 from phys import Vec2d
-
-
-@pytest.fixture
-def u():
-    return Vec2d(3, 4)
-
-
-@pytest.fixture
-def v():
-    return Vec2d(1, 1)
-
-
-@pytest.fixture
-def ii():
-    return Vec2d(1, 0)
-
-
-@pytest.fixture
-def jj():
-    return Vec2d(0, 1)
 
 
 def similar(x, y, tol=1e-6):

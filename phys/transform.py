@@ -4,7 +4,7 @@ from math import sqrt, pi
 from functools import singledispatch
 
 from .vec2d import Vec2d, VecLike, asvec2d
-from .mat22 import Mat2, asmat2
+from .mat2 import Mat2, asmat2
 
 RADS_TO_DEGREES = 180 / pi
 DEGREES_TO_RADS = pi / 180
@@ -32,27 +32,37 @@ class Transform:
     ty: float
 
     @property
-    def mat2(self):
+    def matrix(self):
         """
         Matriz implícita na transformação afim.
         """
-        raise NotImplementedError
+        return Mat2(self.a, self.b, self.c, self.d)
+
+    @matrix.setter
+    def matrix(self, value):
+        self.a, self.b, self.c, self.d = value.flat()
 
     @property
-    def vec2(self):
+    def vector(self):
         """
         Vetor de translação da transformação afim.
         """
-        raise NotImplementedError
+        return Vec2d(self.tx, self.ty)
+
+    @vector.setter
+    def vector(self, value):
+        self.tx, self.ty = value
 
     # Construtores alternativos
     @classmethod
-    def affine(cls, mat=None, translation=None):
+    def affine(cls, mat=None, translation=(0, 0)):
         """
         Cria transformação afim a partir da matriz de transformação linear e 
         um vetor de deslocamento
         """
-        return cls.scale(1, 1)
+        m = Mat2.identity() if mat is None else mat
+        x, y = translation
+        return cls(m.a, m.b, m.c, m.d, x, y)
 
     @classmethod
     def identity(cls):
@@ -62,32 +72,44 @@ class Transform:
         return cls.scale(1, 1)
 
     @classmethod
-    def rotation(cls, angle):
+    def rotation(cls, angle, translation=(0, 0)):
         """
         Cria uma transformação de rotação (ângulo em radianos).
         """
-        raise NotImplementedError
+        return cls.affine(Mat2.rotation(angle), translation)
 
     @classmethod
-    def rotation_degrees(cls, angle):
+    def rotation_degrees(cls, angle, translation=(0, 0)):
         """
         Cria uma transformação de rotação (ângulo em graus).
         """
-        return cls.rotation(angle * DEGREES_TO_RADS)
+        return cls.rotation(angle * DEGREES_TO_RADS, translation)
 
     @classmethod
-    def scale(cls, scale_x, scale_y=None):
+    def scale(cls, scale_x, scale_y=None, translation=(0, 0)):
         """
         Cria transformação de escala.
         """
-        raise NotImplementedError
+        return cls.affine(Mat2.scale(scale_x, scale_y), translation)
 
     @classmethod
-    def similarity(cls, scale=None, angle=None, angle_degrees=None, translation=None):
+    def similarity(cls, *, scale=None, angle=None, angle_degrees=None, translation=(0, 0)):
         """
         Cria transformação de similaridade a partir de operação fundamental.
         """
-        raise NotImplementedError
+        if angle is not None:
+            M = Mat2.rotation(angle)
+        elif angle_degrees is not None:
+            M = Mat2.rotation(angle_degrees)
+        else: 
+            M = Mat2.identity()
+        vec = Vec2d(*translation)
+
+        if scale is not None:
+            vec *= scale
+            M = Mat2.scale(scale) * M
+        
+        return cls.affine(M,vec)
 
     def __init__(self, a=1, b=0, c=0, d=1, tx=0, ty=0):
         self.a = a + 0.0
@@ -98,86 +120,62 @@ class Transform:
         self.ty = ty + 0.0
 
     def __mul__(self, other):
-        raise NotImplementedError
+        if isinstance(other, Mat2):
+            return Transform.affine(other * self.matrix, other.T * self.vector)
+        elif isinstance(other, Transform):
+            M = self.matrix
+            return Transform.affine(M * other.matrix, self.vector + M * other.vector)
+        elif isinstance(other, (tuple, Vec2d)):
+            return self.transform_vector(other)
+        return NotImplemented
 
     def __rmul__(self, other):
-        raise NotImplementedError
+        if isinstance(other, Mat2):
+            return Transform.affine(other * self.matrix, other * self.vector)
+        return NotImplemented
+
+    def __add__(self, other):
+        if isinstance(other, (Vec2d, tuple)):
+            M = self.matrix
+            return Transform.affine(M, self.vector + M * other)
+        return NotImplemented
+
+    def __radd__(self, other):
+        if isinstance(other, (Vec2d, tuple)):
+            return Transform.affine(self.matrix, self.vector + other)
+        return NotImplemented
 
     # Comparações
     def __eq__(self, other):
-        raise NotImplementedError
-
-    def __neq__(self, other):
-        raise NotImplementedError
-
-    # Comportamento de sequências
-    def __iter__(self):
-        raise NotImplementedError
-
-    def __getitem__(self, idx):
-        raise NotImplementedError
-
-    def __setitem__(self, idx, value):
-        raise NotImplementedError
+        if isinstance(other, Transform):
+            return (
+                self.a == other.a 
+                and self.b == other.b 
+                and self.c == other.c 
+                and self.d == other.d 
+                and self.tx == other.tx 
+                and self.ty == other.ty
+            )
+        return NotImplemented
 
     # Métodos da classe
     def copy(self):
         """
         Retorna cópia da transformação afim.
         """
-        raise NotImplementedError
+        return Transform(self.a, self.b, self.c, self.d, self.tx, self.ty)
 
-    def rotate(self, angle: float):
+    def mutate_vector(self, vec: Vec2d):
         """
-        Rotaciona vetor pelo ângulo em radianos.
+        Transforma vetor por transformação  afim.
         """
-        raise NotImplementedError
+        vec.x, vec.y = self.matrix * vec + self.vector 
 
-    def rotate_degrees(self, angle: float):
+    def transform_vector(self, vec: VecLike):
         """
-        Rotaciona vetor pelo ângulo em graus.
+        Transforma vetor por transformação  afim.
         """
-        self.rotate(angle * DEGREES_TO_RADS)
-
-    def rotated(self, angle: float) -> "Transform":
-        """
-        Cria nova transformação afim rotacionado ângulo em radianos.
-        """
-        new = self.copy()
-        new.rotate(angle)
-        return new
-
-    def rotated_degrees(self, angle: float) -> "Transform":
-        """
-        Cria nova transformação afim rotacionado ângulo em graus.
-        """
-        return self.rotated(angle * DEGREES_TO_RADS)
-
-    def transform(self, obj):
-        """
-        Transforma objeto por transformação  afim.
-        """
-        raise NotImplementedError
-
-    def transformed(self, obj):
-        """
-        Retorna cópia de objeto transformado objeto por transformação afim.
-        """
-        raise NotImplementedError
-
-    def translate(self, vec: VecLike):
-        """
-        Acrescenta vetor de translação à transformação.
-        """
-        raise NotImplementedError
-
-    def translated(self, vec: VecLike):
-        """
-        Retorna nova transformação transladada por vetor.
-        """
-        new = self.copy()
-        new.translate(vec)
-        return new
+        return self.matrix * vec + self.vector
 
 
 #
@@ -198,7 +196,7 @@ def astransform(obj) -> "Transform":
 
 
 @singledispatch
-def transformed(obj, transform: Transform):
+def transform(obj, transform: Transform):
     """
     Retorna cópia de objeto transformado pela transformação afim dada.
     """
@@ -208,7 +206,7 @@ def transformed(obj, transform: Transform):
 
 
 @singledispatch
-def transform(obj, transform: Transform):
+def mutate_by(obj, transform: Transform):
     """
     Transforma objeto pela transformação afim dada.
     """

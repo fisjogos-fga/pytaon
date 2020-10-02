@@ -3,7 +3,7 @@ import random
 from math import sqrt
 
 from .collision import Collision
-from .vec2d import Vec2d
+from .vec2d import Vec2d, asvec2d
 
 
 class Body:
@@ -18,27 +18,78 @@ class Body:
     position: Vec2d = None
     velocity: Vec2d = None
     force: Vec2d = None
-
-    position_x = property(lambda self: self.position.x)
-    position_y = property(lambda self: self.position.y)
-    velocity_x = property(lambda self: self.velocity.x)
-    velocity_y = property(lambda self: self.velocity.y)
+    position_x = property(lambda self: self.position.x,
+                          lambda self, value: setattr(self.position, 'x', value))
+    position_y = property(lambda self: self.position.y, 
+                          lambda self, value: setattr(self.position, 'y', value))
+    velocity_x = property(lambda self: self.velocity.x,
+                          lambda self, value: setattr(self.velocity, 'x', value))
+    velocity_y = property(lambda self: self.velocity.y, 
+                          lambda self, value: setattr(self.velocity, 'y', value))
 
     @property
     def area(self):
+        """
+        Área da figura geométrica.
+        """
         name = type(self).__name__
         raise NotImplementedError(f"Corpo {name} não implementa área")
 
     @property
     def density(self):
+        """
+        Densidade do objeto.
+        """
         return self.mass / self.area if self.area else float("inf")
 
-    def __init__(self, pos=(0, 0), vel=(0, 0), mass=1.0, color=0):
+    @density.setter
+    def density(self, value):
+        self.mass *= value / self.density 
+
+    @property
+    def kinetic_energy(self):
+        """
+        Energia cinética associada ao corpo.
+        """
+        raise NotImplementedError
+
+    @property
+    def right(self):
+        """
+        Coordenada x da margem direita do corpo.
+        """
+        raise NotImplementedError
+
+    @property
+    def left(self):
+        """
+        Coordenada x da margem esquerda do corpo.
+        """
+        raise NotImplementedError
+    
+    @property
+    def top(self):
+        """
+        Coordenada y da margem superior do corpo.
+        """
+        raise NotImplementedError
+
+    @property
+    def bottom(self):
+        """
+        Coordenada y da margem inferior do corpo.
+        """
+        raise NotImplementedError
+    
+    def __init__(self, pos=(0, 0), vel=(0, 0), mass=1.0, color=0, damping=None, gravity=None, restitution=None):
         self.position = Vec2d(*pos)
         self.velocity = Vec2d(*vel)
         self.mass = float(mass)
         self.color = color
         self.force = Vec2d(0, 0)
+        self.damping = None if damping is None else float(damping)
+        self.gravity = None if gravity is None else asvec2d(gravity)
+        self.restitution = None if restitution is None else float(restitution)
 
     def apply_force(self, fx, fy=None):
         """

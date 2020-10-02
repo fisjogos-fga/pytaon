@@ -32,18 +32,55 @@ class Mat2:
         """
         Traço da matriz.
         """
-        raise NotImplementedError
+        return self.a + self.d
 
     @property
     def determinant(self):
         """
         Determinante da matriz.
         """
-        raise NotImplementedError
+        return self.a * self.d - self.b * self.c
 
     @property
     def T(self):
+        """
+        Atributo que contêm a matriz transposta.
+        """
         return self.transposed()
+
+    @property
+    def rows(self):
+        """
+        Dupla de vetores linha.
+        """
+        return (Vec2d(self.a, self.c), Vec2d(self.b, self.d))
+
+    @property
+    def cols(self):
+        """
+        Dupla de vetores coluna.
+        """
+        return (Vec2d(self.a, self.b), Vec2d(self.c, self.d))
+
+    @property
+    def eigenvalues(self):
+        """
+        Lista os dois autovalores da matriz.
+        """
+        a, b, c, d = self.flat()
+        aux =  d ** 2 - 2 * a * d + a ** 2 + 4 * c * b
+        aux = sqrt(aux) if aux >= 0 else sqrt(-aux) * 1j
+        return ((d + a + aux) / 2, (d + a - aux) / 2)
+
+    @property
+    def eigenvectors(self):
+        """
+        Lista dos dois autovetores associados a cada autovalor.
+        """
+        l1, l2 = self.eigenvalues
+        v1 = Vec2d(self.c / (l1 - self.a), 1)
+        v2 = Vec2d(self.c / (l2 - self.a), 1)
+        return v1.normalized(), v2.normalized()
 
     # Construtores alternativos
     @classmethod
@@ -72,7 +109,9 @@ class Mat2:
         """
         Cria uma matriz de escala.
         """
-        raise NotImplementedError
+        if scale_y is None:
+            scale_y = scale_x
+        return cls(scale_x, 0, 0, scale_y)
 
     @classmethod
     def zero(cls):
@@ -116,6 +155,8 @@ class Mat2:
             raise NotImplementedError
         elif isinstance(other, Number):
             raise NotImplementedError
+        elif isinstance(other, Vec2d):
+            return self.transform_vector(other)
         return NotImplemented
 
     def __rmul__(self, other):
@@ -176,6 +217,15 @@ class Mat2:
         """
         raise NotImplementedError
 
+    def flat(self):
+        """
+        Retorna sequência com componentes a, b, c e d.
+        """
+        yield self.a
+        yield self.b
+        yield self.c
+        yield self.d
+
     def interpolate_to(self, other: MatLike, range: float) -> "Mat2":
         """
         Interpola matriz linearmente até other no intervalo controlado por range.
@@ -185,11 +235,18 @@ class Mat2:
         """
         raise NotImplementedError
 
+    def inverse(self):
+        """
+        Retorna matrix inversa tal qual M.inverse() * M = Mat2.identity()
+        """
+        det = self.determinant
+        return Mat2(self.d / det, -self.b / det, -self.c / det, self.a / det)
+
     def rotate(self, angle: float):
         """
         Rotaciona matriz pelo ângulo em radianos.
         """
-        raise NotImplementedError
+        self.a, self.b, self.c, self.d = self.rotated(angle)
 
     def rotate_degrees(self, angle: float):
         """
@@ -201,9 +258,7 @@ class Mat2:
         """
         Cria nova matriz rotacionado ângulo em radianos.
         """
-        new = self.copy()
-        new.rotate(angle)
-        return new
+        raise NotImplementedError
 
     def rotated_degrees(self, angle: float) -> "Mat2":
         """
@@ -211,34 +266,32 @@ class Mat2:
         """
         return self.rotated(angle * DEGREES_TO_RADS)
 
-    def transform_vector(self, vec: Vec2d):
+    def mutate_vector(self, vec: Vec2d):
         """
-        Transforma vetor pela matriz.
+        Transforma vetor pela matriz, modificando o argumento.
         """
-        vec.x, vec.y = self.transformed_vector(vec)
+        vec.x, vec.y = self.transform_vector(vec)
 
-    def transformed_vector(self, vec: VecLike) -> Vec2d:
+    def transform_vector(self, vec: VecLike) -> Vec2d:
         """
         Retorna cópia de vetor transformado pela matriz.
 
         Mesmo que Mat2 * Vec2d
         """
         x, y = vec
-        return Vec2d(x * self.a + y * self.c, x * self.b + y * self.d)
+        return Vec2d(self.a * x + self.c * y, self.b * x + self.d * y)
 
     def transpose(self):
         """
         Transpõe matriz.
         """
-        raise NotADirectoryError
+        self.b, self.c = self.c, self.b
 
     def transposed(self) -> "Mat2":
         """
         Retorna cópia de matriz transposta.
         """
-        new = self.copy()
-        new.transpose()
-        return new
+        return Mat2(self.a, self.c, self.b, self.d)
 
 
 #

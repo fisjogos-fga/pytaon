@@ -4,10 +4,10 @@ build-backend = "flit_core.buildapi"
 
 [tool.flit.metadata]
 module = "phys"
-dist-name = "pyxel-physics"
+dist-name = "physics-engine"
 author = "Fábio Macêdo Mendes"
 author-email = "fabiomacedomendes@gmail.com"
-home-page = "https://github.com/fabiommendes/pyxel-physics"
+home-page = "https://github.com/fisjogos-fga/engine"
 classifiers = ["License :: OSI Approved :: MIT License"]
 requires = ["pyxel >= 1.4.0"]
 

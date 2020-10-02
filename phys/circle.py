@@ -15,6 +15,11 @@ class Circle(Body):
     def area(self):
         return pi * self.radius ** 2
 
+    right = property(lambda self: self.position.x + self.radius)
+    left = property(lambda self: self.position.x - self.radius)
+    top = property(lambda self: self.position.y + self.radius)
+    bottom = property(lambda self: self.position.y - self.radius)
+
     def __init__(self, radius, *args, **kwargs):
         self.radius = radius
         super().__init__(*args, **kwargs)

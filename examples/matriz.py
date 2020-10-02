@@ -5,6 +5,7 @@ Transformações lineares
 Este programa demonstra o efeito de transformações lineares em um grupo de pontos.
 """
 
+import re
 import pyxel
 from phys import Mat2
 
@@ -13,8 +14,8 @@ def read_mat(msg) -> Mat2:
     """
     Pede uma entrada vetorial.
     """
-    a, c = map(float, input(msg).split(","))
-    b, d = map(float, input("").split(","))
+    a, c = map(float, re.split(r' *[, ] *', input(msg)))
+    b, d = map(float, re.split(r' *[, ] *', input("")))
     return Mat2(a, b, c, d)
 
 
@@ -78,7 +79,7 @@ def update():
 
     # Aplica transformação linear nos pontos (ou não)
     if pyxel.btn(pyxel.KEY_SPACE):
-        pyxel.transform = pyxel.M.transformed_vector
+        pyxel.transform = pyxel.M.transform_vector
     else:
         pyxel.transform = None
 
@@ -138,13 +139,14 @@ def main():
     # Pede vetores de entrada para o usuário
     print(__doc__)
 
-    pyxel.M = read_mat("M [[a, c],\n   [b, d]]\n")
+    pyxel.M = read_mat("M [[a, c],\n   [b, d]]\n\nDigite uma matriz:\n")
     pyxel.factory = square
     pyxel.points = list(square())
     pyxel.transform = None
 
     # Inicializa o módulo e roda!
     pyxel.init(240, 180, caption="Retas", fps=30)
+    pyxel.mouse(True)
     pyxel.run(update, draw)
 
 
