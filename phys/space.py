@@ -19,7 +19,16 @@ class Space:
 
     bodies: List[Body]
 
-    def __init__(self, damping=0.0, gravity=(0, 0), restitution=1.0, margin_left=None, margin_right=None, margin_top=None, margin_bottom=None):
+    def __init__(
+        self,
+        damping=0.0,
+        gravity=(0, 0),
+        restitution=1.0,
+        margin_left=None,
+        margin_right=None,
+        margin_top=None,
+        margin_bottom=None,
+    ):
         self.time = 0.0
         self.current_time_step = 0.0
         self.bodies = []
@@ -136,7 +145,7 @@ class Space:
             for body in self.bodies:
                 if body.left <= margin:
                     e = body.restitution
-                    body.velocity.y *= (-1 if e is None else -e)
+                    body.velocity.y *= -1 if e is None else -e
 
         # Margem direita
         NotImplemented

@@ -1,6 +1,6 @@
 from typing import Union, Tuple
 from numbers import Number
-from math import sqrt, pi
+from math import sqrt, cos, sin, pi
 
 from .vec2d import Vec2d, VecLike
 
@@ -68,7 +68,7 @@ class Mat2:
         Lista os dois autovalores da matriz.
         """
         a, b, c, d = self.flat()
-        aux =  d ** 2 - 2 * a * d + a ** 2 + 4 * c * b
+        aux = d ** 2 - 2 * a * d + a ** 2 + 4 * c * b
         aux = sqrt(aux) if aux >= 0 else sqrt(-aux) * 1j
         return ((d + a + aux) / 2, (d + a - aux) / 2)
 
@@ -95,7 +95,26 @@ class Mat2:
         """
         Cria uma matriz de rotação (ângulo em radianos).
         """
-        raise NotImplementedError
+        cos_ = cos(angle)
+        sin_ = sin(angle)
+        return cls(cos_, sin_, -sin_, cos_)
+
+    @classmethod
+    def projection(cls, angle):
+        """
+        Cria uma matriz de projeção (ângulo em radianos).
+        """
+        cos_ = cos(angle)
+        sin_ = sin(angle)
+        diag = cos_ * sin_
+        return cls(cos_ ** 2, diag, diag, sin_ ** 2)
+
+    @classmethod
+    def projection_degrees(cls, angle):
+        """
+        Cria uma matriz de projeção (ângulo em graus).
+        """
+        return cls.projection(angle * DEGREES_TO_RADS)
 
     @classmethod
     def rotation_degrees(cls, angle):
@@ -133,7 +152,11 @@ class Mat2:
 
     # Operações matemáticas
     def __add__(self, other):
-        raise NotImplementedError
+        if isinstance(other, Mat2):
+            return Mat2(
+                self.a + other.a, self.b + other.b, self.c + other.c, self.d + other.d
+            )
+        return NotImplemented
 
     def __radd__(self, other):
         raise NotImplementedError
@@ -142,7 +165,11 @@ class Mat2:
         raise NotImplementedError
 
     def __sub__(self, other):
-        raise NotImplementedError
+        if isinstance(other, Mat2):
+            return Mat2(
+                self.a - other.a, self.b - other.b, self.c - other.c, self.d - other.d
+            )
+        return NotImplemented
 
     def __rsub__(self, other):
         raise NotImplementedError

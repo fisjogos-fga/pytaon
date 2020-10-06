@@ -18,8 +18,8 @@ player2 = space.add_aabb(112, 45 - h, 115, 45 + h, color=pyxel.COLOR_WHITE)
 ball = space.add_aabb(58, 43, 62, 47, color=pyxel.COLOR_RED)
 
 # Margens
-#margin_bottom = space.add_aabb(0, 90, 120, 100, mass="inf", gravity=(0, 0))
-#margin_top = space.add_aabb(0, -10, 120, 0, mass="inf", gravity=(0, 0))
+# margin_bottom = space.add_aabb(0, 90, 120, 100, mass="inf", gravity=(0, 0))
+# margin_top = space.add_aabb(0, -10, 120, 0, mass="inf", gravity=(0, 0))
 
 
 def update():

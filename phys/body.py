@@ -18,14 +18,22 @@ class Body:
     position: Vec2d = None
     velocity: Vec2d = None
     force: Vec2d = None
-    position_x = property(lambda self: self.position.x,
-                          lambda self, value: setattr(self.position, 'x', value))
-    position_y = property(lambda self: self.position.y, 
-                          lambda self, value: setattr(self.position, 'y', value))
-    velocity_x = property(lambda self: self.velocity.x,
-                          lambda self, value: setattr(self.velocity, 'x', value))
-    velocity_y = property(lambda self: self.velocity.y, 
-                          lambda self, value: setattr(self.velocity, 'y', value))
+    position_x = property(
+        lambda self: self.position.x,
+        lambda self, value: setattr(self.position, "x", value),
+    )
+    position_y = property(
+        lambda self: self.position.y,
+        lambda self, value: setattr(self.position, "y", value),
+    )
+    velocity_x = property(
+        lambda self: self.velocity.x,
+        lambda self, value: setattr(self.velocity, "x", value),
+    )
+    velocity_y = property(
+        lambda self: self.velocity.y,
+        lambda self, value: setattr(self.velocity, "y", value),
+    )
 
     @property
     def area(self):
@@ -44,7 +52,7 @@ class Body:
 
     @density.setter
     def density(self, value):
-        self.mass *= value / self.density 
+        self.mass *= value / self.density
 
     @property
     def kinetic_energy(self):
@@ -66,7 +74,7 @@ class Body:
         Coordenada x da margem esquerda do corpo.
         """
         raise NotImplementedError
-    
+
     @property
     def top(self):
         """
@@ -80,8 +88,17 @@ class Body:
         Coordenada y da margem inferior do corpo.
         """
         raise NotImplementedError
-    
-    def __init__(self, pos=(0, 0), vel=(0, 0), mass=1.0, color=0, damping=None, gravity=None, restitution=None):
+
+    def __init__(
+        self,
+        pos=(0, 0),
+        vel=(0, 0),
+        mass=1.0,
+        color=0,
+        damping=None,
+        gravity=None,
+        restitution=None,
+    ):
         self.position = Vec2d(*pos)
         self.velocity = Vec2d(*vel)
         self.mass = float(mass)

@@ -86,6 +86,20 @@ class Transform:
         return cls.rotation(angle * DEGREES_TO_RADS, translation)
 
     @classmethod
+    def projection(cls, angle, translation=(0, 0)):
+        """
+        Cria uma transformação de projeção (ângulo em radianos).
+        """
+        return cls.affine(Mat2.projection(angle), translation)
+
+    @classmethod
+    def projection_degrees(cls, angle, translation=(0, 0)):
+        """
+        Cria uma transformação de projeção (ângulo em graus).
+        """
+        return cls.projection(angle * DEGREES_TO_RADS, translation)
+
+    @classmethod
     def scale(cls, scale_x, scale_y=None, translation=(0, 0)):
         """
         Cria transformação de escala.
@@ -93,7 +107,9 @@ class Transform:
         return cls.affine(Mat2.scale(scale_x, scale_y), translation)
 
     @classmethod
-    def similarity(cls, *, scale=None, angle=None, angle_degrees=None, translation=(0, 0)):
+    def similarity(
+        cls, *, scale=None, angle=None, angle_degrees=None, translation=(0, 0)
+    ):
         """
         Cria transformação de similaridade a partir de operação fundamental.
         """
@@ -101,15 +117,15 @@ class Transform:
             M = Mat2.rotation(angle)
         elif angle_degrees is not None:
             M = Mat2.rotation(angle_degrees)
-        else: 
+        else:
             M = Mat2.identity()
         vec = Vec2d(*translation)
 
         if scale is not None:
             vec *= scale
             M = Mat2.scale(scale) * M
-        
-        return cls.affine(M,vec)
+
+        return cls.affine(M, vec)
 
     def __init__(self, a=1, b=0, c=0, d=1, tx=0, ty=0):
         self.a = a + 0.0
@@ -149,11 +165,11 @@ class Transform:
     def __eq__(self, other):
         if isinstance(other, Transform):
             return (
-                self.a == other.a 
-                and self.b == other.b 
-                and self.c == other.c 
-                and self.d == other.d 
-                and self.tx == other.tx 
+                self.a == other.a
+                and self.b == other.b
+                and self.c == other.c
+                and self.d == other.d
+                and self.tx == other.tx
                 and self.ty == other.ty
             )
         return NotImplemented
@@ -169,13 +185,13 @@ class Transform:
         """
         Transforma vetor por transformação  afim.
         """
-        vec.x, vec.y = self.matrix * vec + self.vector 
+        vec.x, vec.y = self.transform_vector(vec)
 
     def transform_vector(self, vec: VecLike):
         """
         Transforma vetor por transformação  afim.
         """
-        return self.matrix * vec + self.vector
+        return self.matrix.transform_vector(vec) + self.vector
 
 
 #

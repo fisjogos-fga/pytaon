@@ -32,6 +32,7 @@ def jj():
 def M():
     return Mat2(1, 3, 2, 4)
 
+
 @pytest.fixture
 def N():
     return Mat2(1, -1, -1, 1)

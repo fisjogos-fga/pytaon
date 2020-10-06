@@ -7,23 +7,14 @@ Este programa demonstra o efeito de transformações lineares em um grupo de pon
 
 import re
 import pyxel
-from phys import Mat2
-
-
-def read_mat(msg) -> Mat2:
-    """
-    Pede uma entrada vetorial.
-    """
-    a, c = map(float, re.split(r' *[, ] *', input(msg)))
-    b, d = map(float, re.split(r' *[, ] *', input("")))
-    return Mat2(a, b, c, d)
+from phys import Transform, Vec2d
 
 
 def square():
     """
     Produz pontos que formam um quadrado.
     """
-    N = 50
+    N = 30
     for i in range(N + 1):
         for j in range(N + 1):
             x = 2.0 * (i / N) - 1.0
@@ -77,6 +68,31 @@ def update():
         for i, (x, y) in enumerate(pyxel.points):
             pyxel.points[i] = (x + dl, y)
 
+    # Modifica o tipo de transformação
+    if pyxel.btnp(pyxel.KEY_R):
+        pyxel.factory = Transform.rotation_degrees
+    elif pyxel.btnp(pyxel.KEY_P):
+        pyxel.factory = Transform.projection_degrees
+
+    # Altera o ângulo da matriz
+    if pyxel.btnp(pyxel.KEY_Z, period=2):
+        pyxel.angle += 1
+    if pyxel.btnp(pyxel.KEY_X, period=2):
+        pyxel.angle -= 1
+
+    # Altera o vetor de translação
+    delta = 0.02
+    if pyxel.btn(pyxel.KEY_A):
+        pyxel.translation.x -= delta
+    if pyxel.btn(pyxel.KEY_D):
+        pyxel.translation.x += delta
+    if pyxel.btn(pyxel.KEY_W):
+        pyxel.translation.y += delta
+    if pyxel.btn(pyxel.KEY_S):
+        pyxel.translation.y -= delta
+
+    pyxel.M = pyxel.factory(pyxel.angle, translation=pyxel.translation)
+
     # Aplica transformação linear nos pontos (ou não)
     if pyxel.btn(pyxel.KEY_SPACE):
         pyxel.transform = pyxel.M.transform_vector
@@ -116,10 +132,14 @@ def draw_instructions():
     """
     pyxel.text(5, 0, "Aperte espaco para realizar transformacao", pyxel.COLOR_WHITE)
     pyxel.text(5, 10, "Figuras: [q]uadrado, [c]irculo, [t]riangulo", pyxel.COLOR_RED)
+    pyxel.text(5, 20, "Matriz: [r]otacao, [p]rojecao", pyxel.COLOR_PURPLE)
 
-    (a, c), (b, d) = pyxel.M
-    text = "M = %.2f %.2f\n    %.2f %.2f   " % (a, b, c, d)
-    pyxel.text(240 - 21 * pyxel.FONT_WIDTH, 165, text.rjust(20), pyxel.COLOR_LIME)
+    text = f"angle = {pyxel.angle}"
+    pyxel.text(240 - 21 * pyxel.FONT_WIDTH, 155, text, pyxel.COLOR_RED)
+
+    # (a, c), (b, d) = pyxel.M
+    # text = "M = %.2f %.2f\n    %.2f %.2f   " % (a, b, c, d)
+    # pyxel.text(240 - 21 * pyxel.FONT_WIDTH, 165, text.rjust(20), pyxel.COLOR_LIME)
 
 
 def draw():
@@ -139,8 +159,10 @@ def main():
     # Pede vetores de entrada para o usuário
     print(__doc__)
 
-    pyxel.M = read_mat("M [[a, c],\n   [b, d]]\n\nDigite uma matriz:\n")
-    pyxel.factory = square
+    pyxel.factory = Transform.rotation_degrees
+    pyxel.translation = Vec2d(0, 0)
+    pyxel.angle = 0
+    pyxel.M = pyxel.factory(pyxel.angle)
     pyxel.points = list(square())
     pyxel.transform = None
 
