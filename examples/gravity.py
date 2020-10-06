@@ -2,7 +2,7 @@ import random
 from math import sqrt
 
 import pyxel
-from phys import Space
+from pytaon import Space
 
 
 N = 5

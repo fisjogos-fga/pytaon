@@ -10,7 +10,7 @@ onde R(t), R0 e n são vetores e t é um parâmetro análogo ao tempo.
 """
 
 import pyxel
-from phys import Vec2d
+from pytaon import Vec2d
 
 
 def read_vec(msg) -> Vec2d:

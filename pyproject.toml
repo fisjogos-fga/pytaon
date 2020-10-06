@@ -3,11 +3,11 @@ requires = ["flit_core >=2,<3"]
 build-backend = "flit_core.buildapi"
 
 [tool.flit.metadata]
-module = "phys"
-dist-name = "physics-engine"
+module = "pytaon"
+dist-name = "pytaon"
 author = "Fábio Macêdo Mendes"
 author-email = "fabiomacedomendes@gmail.com"
-home-page = "https://github.com/fisjogos-fga/engine"
+home-page = "https://github.com/fisjogos-fga/pytaon"
 classifiers = ["License :: OSI Approved :: MIT License"]
 requires = ["pyxel >= 1.4.0"]
 

@@ -7,7 +7,7 @@ Este programa demonstra o efeito de transformações lineares em um grupo de pon
 
 import re
 import pyxel
-from phys import Transform, Vec2d
+from pytaon import Transform, Vec2d
 
 
 def square():

@@ -5,7 +5,7 @@ import pytest
 PATH = Path(__file__).parent.parent
 sys.path.append(str(PATH))
 
-from phys import Mat2, Vec2d
+from pytaon import Mat2, Vec2d
 
 
 @pytest.fixture

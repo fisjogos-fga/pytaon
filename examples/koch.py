@@ -3,7 +3,7 @@ from itertools import chain, islice, cycle
 from math import sqrt
 
 import pyxel
-from pymunk.vec2d import Vec2d
+from pytaon import Vec2d
 
 
 def koch(u, v, n):

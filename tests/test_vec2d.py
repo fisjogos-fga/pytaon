@@ -6,7 +6,7 @@ Utiliza os vetores u = <3,4>, v = <1,1>, ii=<1,0> e jj=<0,1> definidos em confte
 import pytest
 import random
 from math import pi, sqrt
-from phys import Vec2d
+from pytaon import Vec2d
 
 
 def similar(x, y, tol=1e-6):

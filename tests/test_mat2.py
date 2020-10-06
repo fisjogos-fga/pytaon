@@ -17,7 +17,7 @@ definidos em conftest.
 import pytest
 import random
 from math import pi, sqrt
-from phys import Mat2, Vec2d
+from pytaon import Mat2, Vec2d
 
 
 def similar(x, y, tol=1e-6):

@@ -1,6 +1,6 @@
 import random
 import pyxel
-from phys import Space, AABB
+from pytaon import Space, AABB
 
 
 # Constantes
