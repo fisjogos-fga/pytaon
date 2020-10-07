@@ -76,9 +76,9 @@ def update():
 
     # Altera o ângulo da matriz
     if pyxel.btnp(pyxel.KEY_Z, period=2):
-        pyxel.angle += 1
-    if pyxel.btnp(pyxel.KEY_X, period=2):
         pyxel.angle -= 1
+    if pyxel.btnp(pyxel.KEY_X, period=2):
+        pyxel.angle += 1
 
     # Altera o vetor de translação
     delta = 0.02
@@ -134,12 +134,13 @@ def draw_instructions():
     pyxel.text(5, 10, "Figuras: [q]uadrado, [c]irculo, [t]riangulo", pyxel.COLOR_RED)
     pyxel.text(5, 20, "Matriz: [r]otacao, [p]rojecao", pyxel.COLOR_PURPLE)
 
-    text = f"angle = {pyxel.angle}"
-    pyxel.text(240 - 21 * pyxel.FONT_WIDTH, 155, text, pyxel.COLOR_RED)
+    text = f"angle = {pyxel.angle} [z|x]"
+    pyxel.text(240 - 26 * pyxel.FONT_WIDTH, 155, text, pyxel.COLOR_RED)
 
-    # (a, c), (b, d) = pyxel.M
-    # text = "M = %.2f %.2f\n    %.2f %.2f   " % (a, b, c, d)
-    # pyxel.text(240 - 21 * pyxel.FONT_WIDTH, 165, text.rjust(20), pyxel.COLOR_LIME)
+    (a, c), (b, d) = pyxel.M.matrix
+    tx, ty = pyxel.M.vector
+    text = "T = %.2f %.2f | %.2f\n    %.2f %.2f | %.2f   " % (a, c, tx, b, d, ty)
+    pyxel.text(240 - 22 * pyxel.FONT_WIDTH, 165, text.rjust(25), pyxel.COLOR_LIME)
 
 
 def draw():

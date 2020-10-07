@@ -10,4 +10,4 @@ author-email = "fabiomacedomendes@gmail.com"
 home-page = "https://github.com/fisjogos-fga/pytaon"
 classifiers = ["License :: OSI Approved :: MIT License"]
 requires = ["pyxel >= 1.4.0"]
-
+description-file = "README.rst"

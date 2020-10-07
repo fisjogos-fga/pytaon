@@ -9,7 +9,7 @@ Este programa mostra como representar retas utilizando uma parametrização da f
 onde R(t), R0 e n são vetores e t é um parâmetro análogo ao tempo. 
 """
 
-import pyxel
+import pytaon as on
 from pytaon import Vec2d
 
 
@@ -22,51 +22,56 @@ def read_vec(msg) -> Vec2d:
 
 
 def update():
-    pyxel.time += pyxel.dt
+    on.time += on.dt
 
 
 def draw():
     # Mostra ponto inicial e legenda.
-    if pyxel.frame_count == 0:
-        pyxel.text(10, 160, "t positivo", pyxel.COLOR_GREEN)
-        pyxel.text(10, 170, "t negativo", pyxel.COLOR_RED)
-        x, y = pyxel.R0
-        pyxel.text(x, pyxel.height - y, str(list(pyxel.R0)), pyxel.COLOR_WHITE)
+    if on.frame_count == 0:
+        x, y = on.middle
+        on.line(0, y, on.width, y, on.COLOR_PURPLE)
+        on.line(x, 0, x, on.height, on.COLOR_PURPLE)
+
+        on.text(10, 160, "t positivo", on.COLOR_GREEN)
+        on.text(10, 170, "t negativo", on.COLOR_RED)
+        x, y = on.R0 + on.middle
+        on.text(x, on.height - y, str(list(on.R0)), on.COLOR_WHITE)
 
     # Marca pontos na tela a partir da parametrização da reta.
-    dt = pyxel.dt / pyxel.steps
-    R0, n = pyxel.R0, pyxel.n
+    dt = on.dt / on.steps
+    R0, n = on.R0, on.n
+    R0 = R0 + on.middle
 
-    for i in range(pyxel.steps):
-        t = pyxel.time + dt * i
+    for i in range(on.steps):
+        t = on.time + dt * i
 
         x1, y1 = R0 + n * t
         x2, y2 = R0 - n * t
 
-        pyxel.pset(x1, pyxel.height - y1, pyxel.COLOR_GREEN)
-        pyxel.pset(x2, pyxel.height - y2, pyxel.COLOR_RED)
+        on.pset(x1, on.height - y1, on.COLOR_GREEN)
+        on.pset(x2, on.height - y2, on.COLOR_RED)
 
     # Desenha tempo decorrido no canto inferior direito
-    pyxel.time += pyxel.dt
-    x, y = (pyxel.width - pyxel.FONT_WIDTH * 14, pyxel.height - pyxel.FONT_HEIGHT)
-    pyxel.rect(x, y, pyxel.FONT_WIDTH * 14, pyxel.FONT_HEIGHT, pyxel.COLOR_BLACK)
-    pyxel.text(x, y, ("t = %.1f" % pyxel.time).rjust(10), pyxel.COLOR_WHITE)
+    on.time += on.dt
+    x, y = (on.width - on.FONT_WIDTH * 14, on.height - on.FONT_HEIGHT)
+    on.rect(x, y, on.FONT_WIDTH * 14, on.FONT_HEIGHT, on.COLOR_BLACK)
+    on.text(x, y, ("t = %.1f" % on.time).rjust(10), on.COLOR_WHITE)
 
 
 def main():
     # Pede vetores de entrada para o usuário
     print(__doc__)
-    pyxel.R0 = read_vec("R0 [x, y]: ")
-    pyxel.n = read_vec("n [x, y]: ")
+    on.R0 = read_vec("R0 [x, y]: ")
+    on.n = read_vec("n [x, y]: ")
 
     # Inicializa o módulo
-    pyxel.time = 0.0
-    pyxel.steps = 100
-    pyxel.dt = 1 / 30
-    pyxel.init(240, 180, caption="Retas", fps=30)
+    on.time = 0.0
+    on.steps = 100
+    on.dt = 1 / 30
+    on.init(240, 180, caption="Retas", fps=30)
 
     # Roda!
-    pyxel.run(update, draw)
+    on.run(update, draw)
 
 
 if __name__ == "__main__":
