@@ -1,6 +1,7 @@
 import pyxel
 import random
 from math import sqrt
+from functools import partial
 
 from .collision import Collision
 from .vec2d import Vec2d, asvec2d
@@ -89,6 +90,38 @@ class Body:
         """
         raise NotImplementedError
 
+    @property
+    def position_func(self):
+        """
+        Função do tipo  fn(body, dt) utilizada para atualizar a 
+        posição de um objeto.
+        """
+        return self._position_func
+
+    @position_func.setter
+    def position_func(self, func):
+        self._position_func = func
+        if callable(func):
+            self._update_position_ = partial(func, self)
+        else:
+            self._update_position_ = self.update_position
+
+    @property
+    def velocity_func(self):
+        """
+        Função do tipo fn(body, gravity, damping, dt) utilizada para atualizar a 
+        velocidade de um objeto.
+        """
+        return self._velocity_func
+
+    @velocity_func.setter
+    def velocity_func(self, func):
+        self._velocity_func = func
+        if callable(func):
+            self._update_velocity_ = partial(func, self)
+        else:
+            self._update_velocity_ = self.update_velocity
+
     def __init__(
         self,
         pos=(0, 0),
@@ -98,6 +131,9 @@ class Body:
         damping=None,
         gravity=None,
         restitution=None,
+        force_func=None,
+        position_func=None,
+        velocity_func=None,
     ):
         self.position = Vec2d(*pos)
         self.velocity = Vec2d(*vel)
@@ -107,6 +143,9 @@ class Body:
         self.damping = None if damping is None else float(damping)
         self.gravity = None if gravity is None else asvec2d(gravity)
         self.restitution = None if restitution is None else float(restitution)
+        self.force_func = force_func
+        self.position_func = position_func
+        self.velocity_func = velocity_func
 
     def apply_force(self, fx, fy=None):
         """
@@ -119,12 +158,14 @@ class Body:
             fx = Vec2d(fx, fy)
         self.force += fx
 
-    def update_velocity(self, dt):
+    def update_velocity(self, gravity, damping, dt):
         """
         Atualiza velocidades de acordo com as forças acumuladas até o presente
         frame.
         """
         acc = self.force / self.mass
+        acc += gravity
+        acc += damping * self.velocity
         self.velocity += acc * dt
         self.force *= 0.0
 

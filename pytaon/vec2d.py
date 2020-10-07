@@ -44,7 +44,7 @@ class Vec2d:
         """
         Módulo do vetor.
         """
-        raise NotImplementedError
+        return sqrt(self.x ** 2 + self.y ** 2)
 
     @length.setter
     def length(self, value):

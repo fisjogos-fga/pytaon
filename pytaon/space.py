@@ -103,18 +103,21 @@ class Space:
         """
         self.current_time_step = dt
 
-        # Aplica forças globais de gravidade e damping. Estas forças são independentes
-        # da massa e atuam diretamente na aceleração.
-        damping = self.damping
-        gravity = self.gravity
+        # Aplica as forças a partir de funções de força
+        time = self.time
         for body in self.bodies:
-            damping = damping if body.damping is None else body.damping
-            gravity = gravity if body.gravity is None else body.gravity
-            body.velocity += (gravity - damping * body.velocity) * dt
+            fn = body.force_func
+            if fn is not None:
+                force = fn(body, time)
+                body.apply_force(force)
 
         # Atualiza as velocidades dos corpos em função das forças acumuladas.
+        global_damping = self.damping or 0.0
+        global_gravity = self.gravity or Vec2d(0, 0)
         for body in self.bodies:
-            body.update_velocity(dt)
+            damping = global_damping if body.damping is None else body.damping
+            gravity = global_gravity if body.gravity is None else body.gravity
+            body._update_velocity_(gravity, damping, dt)
 
         # Resolve as colisões.
         for collision in self.get_collisions():
@@ -122,7 +125,7 @@ class Space:
 
         # Finalmente atualiza as posições.
         for body in self.bodies:
-            body.update_position(dt)
+            body._update_position_(dt)
 
         self.time += dt
 
