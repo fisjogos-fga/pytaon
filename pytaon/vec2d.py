@@ -1,6 +1,6 @@
 from typing import Union, Tuple
 from numbers import Number
-from math import sqrt, pi
+from math import sqrt, pi, cos, sin, acos, asin, degrees
 
 VecLike = Union["Vec2d", Tuple[Number, Number]]
 RADS_TO_DEGREES = 180 / pi
@@ -22,7 +22,7 @@ class Vec2d:
         """
         Ângulo com relação ao eixo x em radianos.
         """
-        raise NotImplementedError
+        return self.get_angle_between(self.unit_x())
 
     @angle.setter
     def angle(self, value):
@@ -33,7 +33,7 @@ class Vec2d:
         """
         Ângulo com relação ao eixo x em graus.
         """
-        raise NotImplementedError
+        return RADS_TO_DEGREES * self.angle
 
     @angle_degrees.setter
     def angle_degrees(self, value):
@@ -55,7 +55,14 @@ class Vec2d:
         """
         Módulo do vetor ao quadrado.
         """
-        raise NotImplementedError
+        return self.length * self.length
+
+    @property
+    def unit(self) -> "Vec2d":
+        """
+        Vetor unitário na direção do vetor.
+        """
+        return self / self.length
 
     # Métodos estáticos
     @classmethod
@@ -135,7 +142,7 @@ class Vec2d:
         return self
 
     def __matmul__(self, other):
-        if isinstance(other, (int, float)):
+        if isinstance(other, (Vec2d, tuple)):
             x, y = other
             return self.x * x + self.y * y
         return NotImplemented
@@ -174,7 +181,7 @@ class Vec2d:
         """
         Retorna cópia do vetor.
         """
-        raise NotImplementedError
+        return Vec2d(self.x, self.y)
 
     def cross(self, other: VecLike) -> float:
         """
@@ -190,19 +197,29 @@ class Vec2d:
         
         ``v1.dot(v2) -> v1.x*v2.x + v1.y*v2.y``
         """
-        raise NotImplementedError
+        other = asvec2d(other)
+        return self @ other
 
     def get_angle_between(self, other: VecLike) -> float:
         """
         Retorna ângulo entre self e outro vetor (em radianos).
         """
-        raise NotImplementedError
+        other = asvec2d(other)
+        cos_a = (self @ other) / self.length / other.length
+
+        decimal = abs(cos_a -1)
+        if cos_a > 0 and decimal < 1e-6:
+            cos_a = 1
+        elif cos_a < 0 and decimal < 1e-6:
+            cos_a = -1
+       
+        return acos(cos_a)
 
     def get_angle_degrees_between(self, other: VecLike) -> float:
         """
         Retorna ângulo entre self e outro vetor (em graus).
         """
-        raise NotImplementedError
+        return round(RADS_TO_DEGREES * self.get_angle_between(other)) 
 
     def get_dist_sqrd(self, other: VecLike) -> float:
         """
@@ -241,7 +258,7 @@ class Vec2d:
         """
         Retorna vetor perpendicular na direção 90 graus anti-horário.
         """
-        raise NotImplementedError
+        return Vec2d(1, -self.x/self.y)
 
     def perpendicular_normal(self) -> "Vec2d":
         """
@@ -253,13 +270,16 @@ class Vec2d:
         """
         Projeta vetor em cima de outro vetor.
         """
-        raise NotImplementedError
+        return ((self @ other) / other.length_sqrd) * other
 
     def rotate(self, angle: float):
         """
         Rotaciona vetor pelo ângulo em radianos.
         """
-        raise NotImplementedError
+        _x = self.x * cos(angle) - self.y * sin(angle)
+        _y = self.x * sin(angle) + self.y * cos(angle)
+
+        self.x, self.y = (_x, _y)
 
     def rotate_degrees(self, angle: float):
         """
@@ -271,7 +291,9 @@ class Vec2d:
         """
         Cria novo vetor rotacionado ângulo em radianos.
         """
-        raise NotImplementedError
+        rotated = self.copy()
+        rotated.rotate(angle)
+        return rotated
 
     def rotated_degrees(self, angle: float) -> "Vec2d":
         """
