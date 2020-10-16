@@ -16,8 +16,8 @@ def similar(x, y, tol=1e-6):
 class TestVec2d:
     def test_angle(self, u, v):
         assert u.angle > v.angle
-        assert similar(u.angle, pi / 4)
-        assert similar(u.angle_degrees, 45)
+        assert similar(v.angle, pi / 4)
+        assert similar(v.angle_degrees, 45)
 
     def test_angle_setter(self, u, v):
         u.angle = 0.0

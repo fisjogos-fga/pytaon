@@ -1,6 +1,6 @@
 from typing import Union, Tuple
 from numbers import Number
-from math import sqrt, pi, cos, sin, acos, asin, degrees
+from math import sqrt, pi, cos, sin, acos, asin, atan2, degrees
 
 VecLike = Union["Vec2d", Tuple[Number, Number]]
 RADS_TO_DEGREES = 180 / pi
@@ -22,7 +22,7 @@ class Vec2d:
         """
         Ângulo com relação ao eixo x em radianos.
         """
-        return self.get_angle_between(self.unit_x())
+        return atan2(self.y, self.x)
 
     @angle.setter
     def angle(self, value):
