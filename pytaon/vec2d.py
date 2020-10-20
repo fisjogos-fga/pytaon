@@ -94,10 +94,10 @@ class Vec2d:
         return f"Vec2d({self.x}, {self.y})"
 
     def __neg__(self):
-        raise NotImplementedError
+        return self * -1
 
     def __pos__(self):
-        raise NotImplementedError
+        return self * +1
 
     def __abs__(self):
         return self.length
@@ -179,9 +179,12 @@ class Vec2d:
         return (self.x, self.y)[idx]
 
     def __setitem__(self, idx, value):
+        if idx > 1:
+            raise IndexError
+
         if idx == 0:
             self.x = value
-        elif idx == 1:
+        else:
             self.y = value
 
     # Métodos da classe
