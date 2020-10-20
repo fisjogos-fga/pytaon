@@ -200,7 +200,8 @@ class Vec2d:
         
         ``u.cross(v) -> u.x * v.y - u.y * v.x``
         """
-        raise NotImplementedError
+        x, y = other
+        return self.x * y - self.y * x
 
     def dot(self, other: VecLike) -> float:
         """
@@ -236,7 +237,8 @@ class Vec2d:
         """
         Retorna o quadrado da distância entre self e outro vetor.
         """
-        raise NotImplementedError
+        x, y = other
+        return (x - self.x)**2 + (y - self.y)**2
 
     def get_distance(self, other: VecLike) -> float:
         """
