@@ -55,7 +55,7 @@ class Vec2d:
         """
         Módulo do vetor ao quadrado.
         """
-        return self.length * self.length
+        return self.length**2
 
     @property
     def unit(self) -> "Vec2d":
@@ -124,10 +124,15 @@ class Vec2d:
         return NotImplemented
 
     def __rsub__(self, other):
-        raise NotImplementedError
+        if isinstance(other, (Vec2d, tuple)):
+            x,y = other
+            return Vec2d(x - self.x, y - self.y)
 
     def __isub__(self, other):
-        raise NotImplementedError
+        x, y = other
+        self.x -= x
+        self.y -= y
+        return self
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
@@ -171,10 +176,13 @@ class Vec2d:
         yield self.y
 
     def __getitem__(self, idx):
-        raise NotImplementedError
+        return (self.x, self.y)[idx]
 
     def __setitem__(self, idx, value):
-        raise NotImplementedError
+        if idx == 0:
+            self.x = value
+        elif idx == 1:
+            self.y = value
 
     # Métodos da classe
     def copy(self):
@@ -258,7 +266,7 @@ class Vec2d:
         """
         Retorna vetor perpendicular na direção 90 graus anti-horário.
         """
-        return Vec2d(1, -self.x/self.y)
+        return Vec2d(-self.y, self.x)
 
     def perpendicular_normal(self) -> "Vec2d":
         """

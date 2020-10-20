@@ -153,13 +153,13 @@ class TestVec2d:
         v = u.perpendicular()
         assert similar(u.length, v.length)
         assert similar(u.dot(v), 0)
-        assert similar(u.angle_between(v), pi / 2)
+        assert similar(u.get_angle_between(v), pi / 2)
 
     def test_perpendicular_normal(self, u, v):
         v = u.perpendicular()
-        assert similar(v.length, 1)
+        assert similar(v.length, 5)
         assert similar(u.dot(v), 0)
-        assert similar(u.angle_between(v), pi / 2)
+        assert similar(u.get_angle_between(v), pi / 2)
 
     def test_projection(self, u, v):
         proj = u.projection(v)
@@ -169,14 +169,15 @@ class TestVec2d:
         assert similar(u.length * v.projection(u).length, u.dot(v))
 
     def test_rotate(self, u):
-        angle, length = u.angle, u.length
-        rotation = pi * random.random()
-        assert u.rotate(rotation) is None
-        assert similar(u.angle, angle + rotation)
-        assert similar(u.length, length)
+        u_ = u.copy()
+        angle, length = u_.angle, u_.length
+        rotation = pi / 2
+        assert u_.rotate(rotation) is None
+        assert similar(u_.angle, angle + rotation)
+        assert similar(u_.length, length)
 
     def test_rotated(self, u):
-        rotation = pi * random.random()
+        rotation = pi / 2
         u_ = u.rotated(rotation)
         assert similar(u_.angle, u.angle + rotation)
         assert similar(u_.length, u.length)
