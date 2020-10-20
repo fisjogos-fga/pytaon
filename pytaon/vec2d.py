@@ -248,13 +248,15 @@ class Vec2d:
         """
         Retorna cópia normalizada do vetor.
         """
-        raise NotImplementedError
+        return self / self.length
 
     def normalize_return_length(self) -> float:
         """
         Normaliza vetor e retorna tamanho antes da normalização.
         """
-        raise NotImplementedError
+        length = self.length
+        self = self.normalized
+        return length
 
     def interpolate_to(self, other: VecLike, range: float) -> "Vec2d":
         """
