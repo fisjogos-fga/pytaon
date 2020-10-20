@@ -260,14 +260,15 @@ class Vec2d:
         self = self.normalized
         return length
 
-    def interpolate_to(self, other: VecLike, range: float) -> "Vec2d":
+    def interpolate_to(self, other: VecLike, range_: float) -> "Vec2d":
         """
         Interpola vetor até other no intervalo controlado por range.
 
         Range varia de forma que se range=0.0, retorna self, range=1.0 retorna other
         e valores intermediários produzem interpolações. 
         """
-        raise NotImplementedError
+        other = asvec2d(other)
+        return self * (1 - range_) + range_ * other
 
     def perpendicular(self) -> "Vec2d":
         """
