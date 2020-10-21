@@ -26,7 +26,9 @@ class Vec2d:
 
     @angle.setter
     def angle(self, value):
-        raise NotImplementedError
+        len_ = self.length
+        self.x = len_ * cos(value)
+        self.y = len_ * sin(value)
 
     @property
     def angle_degrees(self):
@@ -37,7 +39,7 @@ class Vec2d:
 
     @angle_degrees.setter
     def angle_degrees(self, value):
-        raise NotImplementedError
+        self.angle = DEGREES_TO_RADS * value
 
     @property
     def length(self):
@@ -48,7 +50,8 @@ class Vec2d:
 
     @length.setter
     def length(self, value):
-        raise NotImplementedError
+         a = value / sqrt(self.x**2 + self.y**2)
+         self.x, self.y = (self.x * a, self.y * a)
 
     @property
     def length_sqrd(self):
